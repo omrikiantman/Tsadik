@@ -88,6 +88,12 @@ build_tree <- function(test_train, split, minsplit, cp = 0.05){
   model <- rpart(class~., data = test_train$train,
                  parms = list(split = split), control = rpart.control(minsplit = minsplit,
                                                                       cp = cp))
+  
+  ##calaculate number of leafs
+  print(grepl("^<leaf>$", as.character(model$frame$var)))
+
+  print(sum(grepl("^<leaf>$", as.character(model$frame$var))))
+  
   pred_train <- as.data.frame(predict(model))
   pred_train$class <- as.factor(ifelse(pred_train$bad <= pred_train$good ,'good', 'bad'))
   pred_test <- as.data.frame(predict(model, newdata = test_train$test))
