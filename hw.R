@@ -89,10 +89,9 @@ build_tree <- function(test_train, split, minsplit, cp = 0.05){
                  parms = list(split = split), control = rpart.control(minsplit = minsplit,
                                                                       cp = cp))
   
-  ##calaculate number of leafs
-  print(grepl("^<leaf>$", as.character(model$frame$var)))
-
-  print(sum(grepl("^<leaf>$", as.character(model$frame$var))))
+  ##calculate number of leafs
+  leafs <- length(grepl("^<leaf>$", as.character(model$frame$var)))
+  terminal_leafs <- sum(grepl("^<leaf>$", as.character(model$frame$var)))
   
   pred_train <- as.data.frame(predict(model))
   pred_train$class <- as.factor(ifelse(pred_train$bad <= pred_train$good ,'good', 'bad'))
@@ -104,7 +103,7 @@ build_tree <- function(test_train, split, minsplit, cp = 0.05){
   fancyRpartPlot(model)
   testAcc <- confusionMatrix(pred_test$class, test_train$test$class)$overall
   trainAcc <- confusionMatrix(pred_train$class, test_train$train$class)$overall
-  list(trainAcc = trainAcc, testAcc = testAcc)
+  list(trainAcc = trainAcc, testAcc = testAcc, leafs = leafs, terminal_leafs = terminal_leafs)
 }
 
 
@@ -115,12 +114,16 @@ create_final_table <- function(test_train, splits= c('gini', 'information'), min
                              cp=double(),
                              trainAcc = double(),
                              testAcc = double(),
+                             total_leafs = numeric(),
+                             terminal_leafs = numeric(),
                              stringsAsFactors=FALSE) 
   for (split in splits) {
     for (min_split in min_splits){
       acc <- build_tree(test_train, split, min_split, cp)
       observation <- data.frame(Split_method = split, Min_splits = min_split,
-                       cp = cp, trainAcc = acc$trainAcc[1], testAcc = acc$testAcc[1], stringsAsFactors =  FALSE)
+                       cp = cp, trainAcc = acc$trainAcc[1],testAcc = acc$testAcc[1],
+                       total_leafs = acc$leafs, terminal_leafs = acc$terminal_leafs,
+                       stringsAsFactors =  FALSE)
       rownames(observation) <- NULL
       results <- rbind(results, observation)
       }
@@ -131,3 +134,4 @@ create_final_table <- function(test_train, splits= c('gini', 'information'), min
 german_credit <- load_and_parse_data('./GermanCredit.xlsx')
 test_train <- split_train_test(german_credit)
 final_table <- create_final_table(test_train)
+final_table
