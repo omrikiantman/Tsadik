@@ -19,8 +19,8 @@ discretization <- function(df, equal_width = 3 , equal_depth = 4){
   #OUTPUT: create a discretization - 
   #Average_Credit_balance, Over_draft - equal depth
   #CC_age - equal width
-  df$over_draft <- cut(df$over_draft, quantile(df$over_draft), include.lowest = TRUE, labels= c('low','meduim-low', 'medium-high', 'high'))
-  df$Average_Credit_Balance <- cut(df$Average_Credit_Balance,  quantile(df$Average_Credit_Balance),  include.lowest = TRUE,labels= c('low','meduim-low', 'medium-high', 'high'))
+  df$over_draft <- cut(df$over_draft, quantile(df$over_draft), include.lowest = TRUE, labels= c('low','medium-low', 'medium-high', 'high'))
+  df$Average_Credit_Balance <- cut(df$Average_Credit_Balance,  quantile(df$Average_Credit_Balance),  include.lowest = TRUE,labels= c('low','medium-low', 'medium-high', 'high'))
   min_age <- min(df$cc_age)
   max_age <- max(df$cc_age)
   df$cc_age <- cut(df$cc_age,seq(min_age,max_age,(max_age-min_age)/equal_width) ,labels = c('young',' adult', 'Senior'), include.lowest = TRUE)
