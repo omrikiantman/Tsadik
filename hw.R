@@ -135,5 +135,6 @@ german_credit <- load_and_parse_data('./GermanCredit.xlsx')
 test_train <- split_train_test(german_credit)
 final_table <- create_final_table(test_train)
 final_table
-r<-1
-#test1
+
+final_table$summary <- paste(final_table[,1],final_table[,2])
+
