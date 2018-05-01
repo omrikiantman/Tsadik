@@ -138,3 +138,31 @@ final_table
 
 final_table$summary <- paste(final_table[,1],final_table[,2])
 
+
+class(factor(final_table$summary))
+plot.default(factor(final_table$summary), final_table[,6], type = "p", col = "red",axes=FALSE)
+axis(side = 1, at =factor(final_table$summary), labels = factor(final_table$summary))
+axis(side=2, at=final_table[,6], labels = final_table[,6])
+
+par(mar = c(5,5,2,5))
+with(final_table, plot(factor(final_table$summary), final_table[,6], type="l", col="red3", 
+             ylab=expression(-log[10](italic(p)))
+             ))
+par(new = T)
+with(final_table, plot(factor(final_table$summary), final_table[,5],axes=FALSE))
+axis(side = 4)
+
+mtext(side = 4, line = 3, 'Number genes selected')
+legend("topleft",
+       legend=c(expression(-log[10](italic(p))), "N genes"),
+       lty=c(1,0), pch=c(NA, 16), col=c("red3", "black"))
+
+with(d, plot(x, logp, type="l", col="red3", 
+             ylab=expression(-log[10](italic(p))),
+             ylim=c(0,3)))
+
+
+
+plot(final_table[,5] ~ factor(final_table$summary))
+
+axis(side = 1, at = as.numeric(final_table$summary), labels = final_table$summary)
