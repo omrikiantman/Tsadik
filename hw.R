@@ -1,6 +1,7 @@
 # EX2 in Data Science 
-# Build a Decesion Tree to classify between fraudulent credit card transactions
+# Build a Decision Tree to classify between fraudulent credit card transactions
 
+#function get data frame and return the data without missing values
 replace_missing_values <- function (df) {
   # replace each numerical column with it's avergage, and categorical value with it's median
   for (col in 1:NCOL(df)){
@@ -14,6 +15,7 @@ replace_missing_values <- function (df) {
   df
 }
 
+#function get as a paramter the data frame and the number of bins and return the data with binning
 discretization <- function(df, equal_width = 3 , equal_depth = 4){
   #INPUT: german_credit data
   #OUTPUT: create a discretization - 
@@ -27,6 +29,7 @@ discretization <- function(df, equal_width = 3 , equal_depth = 4){
   df
 }
 
+#function get as a parameter data frame with the headers as a rows and return the headers as a coloums
 transpose_data <- function(german_credit) {
   # INPUT german credit data where headers & values are row based.
   # OUTPUT german credit df where headers & values are column based.
@@ -131,26 +134,36 @@ create_final_table <- function(test_train, splits= c('gini', 'information'), min
   results
 }
 
+
+
+plot_comparation <- function (x , y1 ,y2){
+  # INPUT names of the split model with the min number of leafs in node,test accurancy and number of terminal nodes
+  # OUTPUT plot of comparion between the models
+  par(mar = c(5,5,2,5))
+  with(data.frame(x,y1,y2), plot.default(x, y1, type = "p", col = "red",pch=c(16),axes=FALSE, 
+                                         xlab = "Split method" ,                 
+                                         ylab="Terminal nodes",ylim = c(5,15)
+  ))
+  axis(side = 1, at =x, labels = x)
+  axis(side=2, at=y1, labels = y1)
+  
+  par(new = T)
+  with(final_table, plot.default(x, y2,type = "p", col = "blue",pch=c(16),axes=FALSE,
+                                 xlab="" ,ylab="" ,ylim = c(0.7,0.75)))
+  axis(side = 4)
+  mtext(side = 4, line = 3, 'Test accurancy')
+  legend("topleft",
+         legend=c("Test accurancy", "terminal nodes"),
+         lty=c(1,1), pch=c(16, 16), col=c( "blue","red3"))
+} 
+
+
+
+#Main program
+
 german_credit <- load_and_parse_data('./GermanCredit.xlsx')
 test_train <- split_train_test(german_credit)
 final_table <- create_final_table(test_train)
 final_table
-
 #plot comperation bewteen the split models
-final_table$summary <- paste(final_table[,1],final_table[,2])
-par(mar = c(5,5,2,5))
-with(final_table, plot.default(factor(final_table$summary), final_table[,6], type = "p", col = "red",pch=c(16),axes=FALSE, 
-              xlab = "Split method" ,                 
-             ylab="Terminal nodes",ylim = c(5,15)
-             ))
-axis(side = 1, at =factor(final_table$summary), labels = factor(final_table$summary))
-axis(side=2, at=final_table[,6], labels = final_table[,6])
-
-par(new = T)
-with(final_table, plot.default(factor(final_table$summary), final_table[,5],type = "p", col = "blue",pch=c(16),axes=FALSE,
-                    xlab="" ,ylab="" ,ylim = c(0.7,0.75)))
-axis(side = 4)
-mtext(side = 4, line = 3, 'Test accurancy')
-legend("topleft",
-       legend=c("Test accurancy", "terminal nodes"),
-       lty=c(1,1), pch=c(16, 16), col=c( "blue","red3"))
+plot_comparation(factor(paste(final_table[,1],final_table[,2])),final_table[,6],final_table[,5])
