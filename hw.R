@@ -136,33 +136,21 @@ test_train <- split_train_test(german_credit)
 final_table <- create_final_table(test_train)
 final_table
 
+#plot comperation bewteen the split models
 final_table$summary <- paste(final_table[,1],final_table[,2])
-
-
-class(factor(final_table$summary))
-plot.default(factor(final_table$summary), final_table[,6], type = "p", col = "red",axes=FALSE)
+par(mar = c(5,5,2,5))
+with(final_table, plot.default(factor(final_table$summary), final_table[,6], type = "p", col = "red",pch=c(16),axes=FALSE, 
+              xlab = "Split method" ,                 
+             ylab="Terminal nodes",ylim = c(5,15)
+             ))
 axis(side = 1, at =factor(final_table$summary), labels = factor(final_table$summary))
 axis(side=2, at=final_table[,6], labels = final_table[,6])
 
-par(mar = c(5,5,2,5))
-with(final_table, plot(factor(final_table$summary), final_table[,6], type="l", col="red3", 
-             ylab=expression(-log[10](italic(p)))
-             ))
 par(new = T)
-with(final_table, plot(factor(final_table$summary), final_table[,5],axes=FALSE))
+with(final_table, plot.default(factor(final_table$summary), final_table[,5],type = "p", col = "blue",pch=c(16),axes=FALSE,
+                    xlab="" ,ylab="" ,ylim = c(0.7,0.75)))
 axis(side = 4)
-
-mtext(side = 4, line = 3, 'Number genes selected')
+mtext(side = 4, line = 3, 'Test accurancy')
 legend("topleft",
-       legend=c(expression(-log[10](italic(p))), "N genes"),
-       lty=c(1,0), pch=c(NA, 16), col=c("red3", "black"))
-
-with(d, plot(x, logp, type="l", col="red3", 
-             ylab=expression(-log[10](italic(p))),
-             ylim=c(0,3)))
-
-
-
-plot(final_table[,5] ~ factor(final_table$summary))
-
-axis(side = 1, at = as.numeric(final_table$summary), labels = final_table$summary)
+       legend=c("Test accurancy", "terminal nodes"),
+       lty=c(1,1), pch=c(16, 16), col=c( "blue","red3"))
